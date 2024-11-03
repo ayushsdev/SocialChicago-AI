@@ -13,10 +13,15 @@ class WeekDay(str, Enum):
 
 class Schedule(BaseModel):
     days: List[WeekDay] = Field(
-        description="Days of the week when this happy hour session is available."
+        description="Days of the week when this happy hour session is available. Do not hallucinate days. Keep this empty if not sure."
     )
-    times: str = Field(
-        description="Time range during which this happy hour session occurs."
+    start_time: str = Field(
+        description="Start time of happy hour in 24-hour format (HH:MM. Do not hallucinate start time. Keep this empty if not sure.",
+        # pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+    )
+    end_time: str = Field(
+        description="End time of happy hour in 24-hour format (HH:MM). Do not hallucinate end time. Keep this empty if not sure.",
+        # pattern="^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
     )
     
     class Config:
@@ -43,6 +48,9 @@ class HappyHourSession(BaseModel):
     schedule: Schedule
     deals: List[Deal] = Field(
         description="List of deals available during this happy hour session. Intelligently identify different schedules if there are more than one kind of happy hours with different times and/or weekday ranges"
+    )
+    deals_summary: str = Field(
+        description="A summary of the deals available during this happy hour session. Keep this under 250 characters. Mention the most important deals by name and mention their deal/price"
     )
     
     class Config:

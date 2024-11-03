@@ -1,3 +1,5 @@
 .env
 flaskAI/
 __pycache__/
+serviceAccountKey.json
+menus/
