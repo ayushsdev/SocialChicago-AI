@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS  # Add this import
 from datetime import datetime
 from config import Config
-from utils import allowed_file
+from utils import allowed_file, is_directory_empty
 from pdf_analyzer import PDFAnalyzer
 from dotenv import load_dotenv
 import json
@@ -43,6 +43,9 @@ def upload_file():
         return jsonify({'error': 'Invalid file type. Only PDF files are allowed'}), 400
 
     try:
+        # Ensure directories exist
+        Config.ensure_directories()
+        
         # Generate unique filename with timestamp
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = f"{timestamp}_{file.filename}"
@@ -69,12 +72,19 @@ def upload_file():
                 os.remove(image_path)
             os.rmdir(pdf_image_dir)  # Remove the empty directory
         
+        # Clean up empty directories
+        if os.path.exists(Config.UPLOAD_FOLDER) and is_directory_empty(Config.UPLOAD_FOLDER):
+            os.rmdir(Config.UPLOAD_FOLDER)
+            
+        if os.path.exists(Config.IMAGE_FOLDER) and is_directory_empty(Config.IMAGE_FOLDER):
+            os.rmdir(Config.IMAGE_FOLDER)
+            
+        print(analysis_result)
         return jsonify({
             'message': 'File uploaded, images extracted and analyzed successfully',
             'filename': filename,
             'analysis': analysis_result
         }), 200
-        
     except Exception as e:
         return jsonify({'error': f'Error processing file: {str(e)}'}), 500
 
