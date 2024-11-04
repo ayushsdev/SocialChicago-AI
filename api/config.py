@@ -1,8 +1,9 @@
 import os
+import tempfile
 
 class Config:
-    UPLOAD_FOLDER = 'uploads'
-    IMAGE_FOLDER = 'extracted_images'
+    UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), 'uploads')
+    IMAGE_FOLDER = os.path.join(tempfile.gettempdir(), 'extracted_images')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
     ALLOWED_EXTENSIONS = {'pdf'}
 

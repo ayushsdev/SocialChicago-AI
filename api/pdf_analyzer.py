@@ -29,9 +29,9 @@ class PDFAnalyzer:
         # Get the PDF filename without extension
         pdf_name = Path(pdf_path).stem
         
-        # Create folder for this PDF's images
+        # Create temporary folder for this PDF's images
         pdf_image_dir = Path(Config.IMAGE_FOLDER) / pdf_name
-        pdf_image_dir.mkdir(exist_ok=True)
+        pdf_image_dir.mkdir(parents=True, exist_ok=True)
         
         # Convert PDF pages to images
         images = convert_from_path(pdf_path)
