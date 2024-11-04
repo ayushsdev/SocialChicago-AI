@@ -23,9 +23,6 @@ class PDFAnalyzer:
     def extract_images(self, pdf_path: str) -> Dict[int, str]:
         """Extract images from PDF pages and save them to the configured image folder.
         Returns a dictionary mapping page numbers to image file paths."""
-        # Create a dictionary to store page number -> image path mapping
-        page_images = {}
-        
         # Get the PDF filename without extension
         pdf_name = Path(pdf_path).stem
         
@@ -33,10 +30,14 @@ class PDFAnalyzer:
         pdf_image_dir = Path(Config.IMAGE_FOLDER) / pdf_name
         pdf_image_dir.mkdir(parents=True, exist_ok=True)
         
-        # Convert PDF pages to images
-        images = convert_from_path(pdf_path)
+        # Convert PDF pages to images with explicit poppler path
+        images = convert_from_path(
+            pdf_path,
+            poppler_path="/usr/bin"  # Add this line to specify poppler path
+        )
         
         # Save each page as an image
+        page_images = {}
         for page_num, image in enumerate(images, start=1):
             image_path = pdf_image_dir / f"page_{page_num}.png"
             image.save(str(image_path), "PNG")
