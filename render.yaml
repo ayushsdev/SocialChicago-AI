@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: social-chicago-ai
+    env: docker
+    buildCommand: docker build -t social-chicago-ai .
+    startCommand: docker run -p $PORT:8000 social-chicago-ai
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false 
