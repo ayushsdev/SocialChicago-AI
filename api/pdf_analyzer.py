@@ -2,10 +2,10 @@ import openai
 import json
 from typing import Dict
 from pathlib import Path
-from config import Config
+from .config import Config
 from pdf2image import convert_from_path
 import base64  # Add this import
-from happyhour_schema import HappyHour
+from .happyhour_schema import HappyHour
 
 
 
