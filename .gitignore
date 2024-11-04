@@ -3,3 +3,4 @@ flaskAI/
 __pycache__/
 serviceAccountKey.json
 menus/
+run.py

@@ -2,10 +2,15 @@ import openai
 import json
 from typing import Dict
 from pathlib import Path
-from .config import Config
+import base64
+import os
 from pdf2image import convert_from_path
-import base64  # Add this import
-from .happyhour_schema import HappyHour
+
+
+# Handle imports differently for local vs Vercel environment
+from api.config import Config
+from api.happyhour_schema import HappyHour
+
 
 
 
@@ -51,51 +56,6 @@ class PDFAnalyzer:
         # Sort pages by number to maintain order
         sorted_pages = sorted(image_paths.items())
         
-        # oldprompt = """You are a specialized assistant focused on generating structured JSON output for happy hour sessions. Follow these guidelines precisely:
-
-        #         1. Happy Hour Sessions:
-        #         - Each happy hour session should be represented as an object in an array under the key `"happy_hours"`.
-        #         - Do not add any additional fields or information outside the specified structure.
-
-        #         2. Structure of Each Happy Hour Session:
-        #         - **Name**:
-        #             - Extract or infer an appropriate name for each happy hour session.
-        #             - If no specific name is given, create a descriptive one based on the main features (e.g., `"Monday Happy Hour"` or `"Weekday Evening Special"`).
-        #             - Keep in mind different happy hour sessions need to have different schedules. If schedules don't exist, just have all the information under one Name in **Deals* 
-
-        #         - **Schedule**:
-        #             - **Days**: Use only the exact values: `"Monday"`, `"Tuesday"`, `"Wednesday"`, `"Thursday"`, `"Friday"`, `"Saturday"`, `"Sunday"`. Each day must be capitalized and in a list.
-        #             - **start_time**: Specify the start time in 24-hour format (HH:MM), e.g., "15:00" for 3:00 PM
-        #             - **end_time**: Specify the end time in 24-hour format (HH:MM), e.g., "18:00" for 6:00 PM
-
-        #         - **Deals**:
-        #             - Each deal should be a separate object within the `"deals"` array. Make sure the prices are actually deals and not just usual prices marked. Keep an eye out for any kind of crossings or strikethroughs.
-        #             - Include the following fields for each deal:
-        #             - **Item**: Name of the food or drink item (e.g., `"Brun-uusto Cheese Sticks"`).
-        #             - **Description**: Any further details about the food or drink item.
-        #             - **Deal**: Price or discount details (e.g., `"$13"`, `"50% off"`).
-        #             - Split compound deals into separate entries (e.g., `"beer and wine half off"` becomes two separate items).
-
-        #         - **Deals Summary**:
-        #             - A summary of the deals available during this happy hour session. Keep this under 250 characters. Mention the most important deals by name and mention their deal/price
-
-        #         3. Formatting and Validation Rules:
-        #         - Days must be in the specified format with each day capitalized.
-        #         - Times should follow a consistent AM/PM format.
-        #         - Each happy hour session must contain `name`, `schedule`, and `deals` fields.
-        #         - Only include deals that are explicitly stated as specials or discounted items.
-
-        #         4. Constraints:
-        #         - All data should be encapsulated within a JSON object with a single key, `"happy_hours"`, containing an array of happy hour sessions.
-        #         - Ensure that only the specified fields are present; no additional properties should be included.
-        #         - The JSON output should be valid and well-formatted. Do not include any explanations, notes, or additional text.
-
-        #         If any required information is missing:
-        #         - For **days**: Include only explicitly mentioned days.
-        #         - For **times**: If no time is specified, do not add a placeholder or make assumptions.
-        #         - For **deals**: Only include clearly described deals.
-        #             """
-
         prompt = """You are a specialized assistant focused on generating structured JSON output for happy hour sessions. Analyze the entire image carefully, including edges and corners, to ensure no information is missed.
 
                 1. Image Analysis Guidelines:
