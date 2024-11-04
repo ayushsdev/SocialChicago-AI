@@ -1,8 +1,14 @@
 import os
+
+# Determine if we're running on Vercel
+if os.environ.get('VERCEL'):
+    from api.config import Config
+else:
+    from config import Config
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS  # Add this import
 from datetime import datetime
-from config import Config
 from utils import allowed_file, is_directory_empty
 from pdf_analyzer import PDFAnalyzer
 from dotenv import load_dotenv

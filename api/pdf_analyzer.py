@@ -128,7 +128,7 @@ class PDFAnalyzer:
                         Each deal must include:
                         - "item": Specific item name
                         - "description": Detailed description including size, restrictions, exclusions
-                        - "deal": Exact price or discount
+                        - "deal": Exact price or discount. If it's a percentage, put it in percentage form. If it's a dollar amount, put it in dollar amount form. If there are just numbers, its most likely a dollar amount.
                         - Split combination deals into individual items
                         - Verify prices are actually discounted (look for strike-throughs, "regular price" mentions)
 
